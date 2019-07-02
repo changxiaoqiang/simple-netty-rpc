@@ -5,9 +5,22 @@ import java.io.Serializable;
 public class RpcResponse implements Serializable {
     private static final long serialVersionUID = -3535478031115936695L;
 
+    private int code;
     private String responseId;
     private Object result;
     private Throwable throwable;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
 
     public String getResponseId() {
         return responseId;
