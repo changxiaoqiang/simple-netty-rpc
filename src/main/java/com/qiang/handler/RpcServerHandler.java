@@ -1,90 +1,28 @@
 package com.qiang.handler;
 
+import com.qiang.beans.RpcRequest;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.mqtt.MqttMessage;
-import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @ChannelHandler.Sharable
-public class RpcServerHandler extends SimpleChannelInboundHandler<MqttMessage> {
+public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     public static Logger logger = LogManager.getLogger(RpcServerHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MqttMessage message) throws Exception {
-        handleMessage(ctx, message);
+    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
+        handleMessage(ctx, request);
     }
 
     /**
      * 处理mqtt消息
      *
      * @param ctx
-     * @param message
-     */
-    private void handleMessage(ChannelHandlerContext ctx, MqttMessage message) {
-
-    }
-
-    /**
-     * ping 响应
-     *
-     * @param ctx
      * @param request
      */
-    private void doPingreoMessage(ChannelHandlerContext ctx, MqttMessage request) {
-
-    }
-
-    /**
-     * 封装发布
-     *
-     * @param str
-     * @param topicName
-     */
-    public static MqttPublishMessage buildPublish(String str, String topicName, Integer messageId) {
-        return null;
-    }
-
-    /**
-     * 处理连接请求
-     *
-     * @param ctx
-     * @param message
-     */
-    private void doConnectMessage(ChannelHandlerContext ctx, MqttMessage message) {
-
-    }
-
-    /**
-     * 处理 客户端订阅消息
-     *
-     * @param ctx
-     * @param request
-     */
-    private void doSubMessage(ChannelHandlerContext ctx, MqttMessage request) {
-
-    }
-
-    /**
-     * 处理客户端回执消息
-     *
-     * @param ctx
-     * @param request
-     */
-    private void doPubAck(ChannelHandlerContext ctx, MqttMessage request) {
-
-    }
-
-    /**
-     * 处理 客户端发布消息。此处只有终端上报的 指令消息
-     * 终端上报 指令执行结果。
-     *
-     * @param ctx
-     * @param request
-     */
-    private void doPublishMessage(ChannelHandlerContext ctx, MqttMessage request) {
+    private void handleMessage(ChannelHandlerContext ctx, RpcRequest request) {
 
     }
 

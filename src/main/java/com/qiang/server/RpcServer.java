@@ -1,7 +1,11 @@
 package com.qiang.server;
 
+import com.qiang.beans.RpcRequest;
+import com.qiang.beans.RpcResponse;
 import com.qiang.handler.HeartbeatHandlerInitializer;
 import com.qiang.handler.RpcServerHandler;
+import com.qiang.util.RpcDecoder;
+import com.qiang.util.RpcEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -23,14 +27,15 @@ public class RpcServer {
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             final RpcServerHandler handler = new RpcServerHandler();
+
             serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO)).option(ChannelOption.SO_BACKLOG, 128)   // option在初始化时就会执行，设置tcp缓冲区
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addFirst(" decoder", new MqttDecoder());
-                            pipeline.addLast("encoder", MqttEncoder.INSTANCE);
+                            pipeline.addLast("decoder", new RpcDecoder(RpcRequest.class));
+                            pipeline.addLast("encoder", new RpcEncoder(RpcResponse.class));
                             pipeline.addLast("heartbeat", new HeartbeatHandlerInitializer(15, 18, 8));
                             pipeline.addLast("handler", handler);
                         }
