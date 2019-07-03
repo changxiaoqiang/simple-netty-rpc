@@ -1,4 +1,4 @@
-package com.qiang.util;
+package com.qiang.rpc.util;
 
 
 import io.netty.buffer.ByteBuf;

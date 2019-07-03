@@ -14,7 +14,7 @@
       </PatternLayout>
       <Filters>
         <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="ACCEPT"/>
-        <ThresholdFilter level="DEBUG" onMatch="DENY" onMismatch="DENY"/>
+        <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
       </Filters>
       <Policies>
         <SizeBasedTriggeringPolicy size="50 MB"/>
@@ -54,10 +54,15 @@
       </Policies>
       <DefaultRolloverStrategy fileIndex="min" max="10"/>
     </RollingRandomAccessFile>
+
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{MMdd HH:mm:ss,SSS}:%c{1}:%L %msg%n"/>
+    </Console>
   </Appenders>
   <Loggers>
     <Root level="trace" additivity="false">
       <AppenderRef ref="common"/>
+      <AppenderRef ref="netty-rpc-error"/>
       <AppenderRef ref="Console"/>
     </Root>
     <Logger name="netty-rpc-logger" level="info" additivity="false">

@@ -1,27 +1,35 @@
-package com.qiang.server;
+package com.qiang.rpc.server;
 
-import com.qiang.beans.RpcRequest;
-import com.qiang.beans.RpcResponse;
-import com.qiang.handler.HeartbeatHandlerInitializer;
-import com.qiang.handler.RpcServerHandler;
-import com.qiang.util.RpcDecoder;
-import com.qiang.util.RpcEncoder;
+import com.qiang.rpc.beans.RpcRequest;
+import com.qiang.rpc.beans.RpcResponse;
+import com.qiang.rpc.container.RpcContainer;
+import com.qiang.rpc.handler.HeartbeatHandlerInitializer;
+import com.qiang.rpc.handler.RpcServerHandler;
+import com.qiang.rpc.util.RpcDecoder;
+import com.qiang.rpc.util.RpcEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.mqtt.MqttDecoder;
-import io.netty.handler.codec.mqtt.MqttEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationContext;
 
 public class RpcServer {
     final static Logger logger = LogManager.getLogger(RpcServer.class);
 
-    public static void start(int port) {
+    private int port;
+
+    public RpcServer(int port) {
+        this.port = port;
+    }
+
+    public void start(ApplicationContext context) {
+        RpcContainer.register(context);
+
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {

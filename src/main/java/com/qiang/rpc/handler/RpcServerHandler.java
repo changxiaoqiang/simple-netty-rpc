@@ -1,9 +1,9 @@
-package com.qiang.handler;
+package com.qiang.rpc.handler;
 
-import com.qiang.beans.RpcRequest;
-import com.qiang.beans.RpcResponse;
-import com.qiang.container.RpcContainer;
-import com.qiang.exception.RequestNotSupportExistException;
+import com.qiang.rpc.beans.RpcRequest;
+import com.qiang.rpc.beans.RpcResponse;
+import com.qiang.rpc.container.RpcContainer;
+import com.qiang.rpc.exception.RequestNotSupportExistException;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @ChannelHandler.Sharable
@@ -21,17 +20,18 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     public static Logger logger = LogManager.getLogger(RpcServerHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
-        handleMessage(ctx, request);
+    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest request) {
+        logger.info("requestId: " + request.getRequestId());
+        handleRequest(ctx, request);
     }
 
     /**
-     * 处理mqtt消息
+     * 处理 Rpc 请求
      *
      * @param ctx
      * @param request
      */
-    private void handleMessage(ChannelHandlerContext ctx, final RpcRequest request) {
+    private void handleRequest(ChannelHandlerContext ctx, final RpcRequest request) {
         String requestName = !StringUtils.isEmpty(request.getName()) ? request.getName() : request.getClassName();
         String className = request.getClassName();
 
@@ -47,6 +47,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
                 Method method = Class.forName(className).getMethod(methodName, parameterTypes);
                 Object result = method.invoke(serviceBean, args);
                 response.setResult(result);
+                response.setResponseId(request.getRequestId());
                 response.setCode(200);
             } catch (ClassNotFoundException e) {
                 response.setCode(400);
@@ -67,7 +68,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         ctx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
             @Override
             public void operationComplete(Future<? super Void> future) throws Exception {
-                System.out.println(request.getRequestId());
+                logger.info("response: " + request.getRequestId() + "\t" + response.getCode());
             }
         });
     }

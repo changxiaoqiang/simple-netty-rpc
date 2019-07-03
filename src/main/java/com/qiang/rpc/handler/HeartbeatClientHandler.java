@@ -1,4 +1,4 @@
-package com.qiang.handler;
+package com.qiang.rpc.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -28,4 +28,5 @@ public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter {
             super.userEventTriggered(ctx, evt);
         }
     }
+
 }

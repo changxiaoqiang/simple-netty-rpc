@@ -1,4 +1,4 @@
-package com.qiang.handler;
+package com.qiang.rpc.handler;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;

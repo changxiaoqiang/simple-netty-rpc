@@ -1,6 +1,6 @@
-package com.qiang.util;
+package com.qiang.rpc.util;
 
-import com.qiang.server.RpcServer;
+import com.qiang.rpc.server.RpcServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,6 +57,7 @@ public class KeyUtil {
 
         return (result.toString());
     }
+
     private static String shortString(String str) {
 
         // 可以自定义生成 MD5 加密字符传前的混合 KEY

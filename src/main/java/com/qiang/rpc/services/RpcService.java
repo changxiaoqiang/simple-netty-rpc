@@ -1,4 +1,4 @@
-package com.qiang.services;
+package com.qiang.rpc.services;
 
 import org.springframework.stereotype.Component;
 
@@ -15,5 +15,6 @@ import java.lang.annotation.Target;
 @Component
 public @interface RpcService {
     String name() default "";
+
     Class<?> value();
 }

@@ -1,4 +1,4 @@
-package com.qiang.exception;
+package com.qiang.rpc.exception;
 
 public class RequestNotSupportExistException extends Exception {
     private String requestPath;

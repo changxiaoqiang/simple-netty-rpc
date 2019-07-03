@@ -1,4 +1,4 @@
-package com.qiang.beans;
+package com.qiang.rpc.beans;
 
 import java.io.Serializable;
 
