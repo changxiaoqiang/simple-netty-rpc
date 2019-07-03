@@ -24,6 +24,7 @@ public class RpcEncoder extends MessageToByteEncoder<Object> {
             oos.flush();
             oos.close();
             byte[] bytes = out.toByteArray();
+            byteBuf.writeInt(bytes.length);
             byteBuf.writeBytes(bytes);
 
         }

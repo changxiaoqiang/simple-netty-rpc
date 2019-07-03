@@ -17,9 +17,20 @@ public class RpcDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
-        int size = byteBuf.readableBytes();
         // TCP 粘包问题
-        if (size > 4) {
+        if (byteBuf.readableBytes() > 4) {
+            byteBuf.markReaderIndex();
+            int size = byteBuf.readInt();
+
+            if(size < 0){
+                channelHandlerContext.close();
+            }
+
+            if(byteBuf.readableBytes() < size){
+                byteBuf.resetReaderIndex();
+                return;
+            }
+
             byte[] bytes = new byte[size];
             byteBuf.readBytes(bytes);
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);

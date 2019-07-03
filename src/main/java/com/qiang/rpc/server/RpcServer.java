@@ -44,7 +44,7 @@ public class RpcServer {
                             ChannelPipeline pipeline = ch.pipeline();
                             pipeline.addLast("decoder", new RpcDecoder(RpcRequest.class));
                             pipeline.addLast("encoder", new RpcEncoder(RpcResponse.class));
-                            pipeline.addLast("heartbeat", new HeartbeatHandlerInitializer(15, 18, 8));
+                            pipeline.addLast("heartbeat", new HeartbeatHandlerInitializer(15, 18, 20));
                             pipeline.addLast("handler", handler);
                         }
                     })

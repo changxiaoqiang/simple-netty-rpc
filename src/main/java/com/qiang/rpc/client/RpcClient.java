@@ -45,7 +45,7 @@ public class RpcClient {
                                 protected void initChannel(SocketChannel ch) throws Exception {
                                     ch.pipeline().addLast(new RpcEncoder(RpcRequest.class));
                                     ch.pipeline().addLast(new RpcDecoder(RpcResponse.class));
-                                    ch.pipeline().addLast(new ReadTimeoutHandler(15));
+                                    ch.pipeline().addLast(new ReadTimeoutHandler(20));
                                     ch.pipeline().addLast(clientHandler);
                                 }
                             })

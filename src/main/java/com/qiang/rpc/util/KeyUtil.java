@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.UUID;
 
 public class KeyUtil {
-    final static Logger logger = LogManager.getLogger(RpcServer.class);
+    final static Logger logger = LogManager.getLogger(KeyUtil.class);
 
     public static String md5(String str) {
         try {
