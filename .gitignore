@@ -20,5 +20,5 @@ logs
 .classpath
 .project
 .bpmn
-.idea
+.idea/
 .idea/*
