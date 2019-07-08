@@ -1,13 +1,14 @@
 package com.qiang.rpc.zk;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.zookeeper.*;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 
 public class ServiceRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistry.class);
+    final static Logger logger = LogManager.getLogger(ServiceRegistry.class);
 
     /*计数器*/
     private CountDownLatch latch = new CountDownLatch(1);
@@ -48,9 +49,13 @@ public class ServiceRegistry {
             });
             // 若计数器不为0,则等待.
             latch.await();
+            if (null == zk.exists("/registry", false)) {
+                zk.create("/registry", "[]".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                logger.debug("create zookeeper node registry");
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("连接zk服务报错: {}", e.getMessage());
+            logger.error("连接zk服务报错: {}", e.getMessage());
         }
         return zk;
     }
@@ -64,11 +69,11 @@ public class ServiceRegistry {
         try {
             byte[] bytes = data.getBytes();
             // 创建 registry 节点（临时）
-            String path = zk.create("/data", bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-            LOGGER.debug("create zookeeper node: ({} => {})", path, data);
+            String path = zk.create("/registry/data", bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+            logger.debug("create zookeeper node: ({} => {})", path, data);
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("创建zk节点出错：{}", e.getMessage());
+            logger.error("创建zk节点出错：{}", e.getMessage());
         }
     }
 }

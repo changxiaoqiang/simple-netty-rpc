@@ -94,7 +94,7 @@ public class RpcClient {
 
                 clientHandler.setQueueMap(req.getRequestId(), queue);
                 channel.writeAndFlush(req).sync();
-                System.out.println(req.getRequestId());
+
                 return queue;
             }
 

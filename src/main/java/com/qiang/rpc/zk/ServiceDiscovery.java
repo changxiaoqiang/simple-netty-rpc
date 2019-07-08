@@ -1,10 +1,10 @@
 package com.qiang.rpc.zk;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ServiceDiscovery {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceDiscovery.class);
+    final static Logger logger = LogManager.getLogger(ServiceDiscovery.class);
 
     private CountDownLatch latch = new CountDownLatch(1);
 
@@ -43,11 +43,11 @@ public class ServiceDiscovery {
             if(size == 1){
                 // 若只有一个地址，则获取该地址
                 data = dataList.get(0);
-                LOGGER.debug("using only data: {}", data);
+                logger.debug("using only data: {}", data);
             }else {
                 // 若存在多个地址，则随机获取一个地址
                 data = dataList.get(ThreadLocalRandom.current().nextInt(size));
-                LOGGER.debug("using random data: {}", data);
+                logger.debug("using random data: {}", data);
             }
         }
         return data;
@@ -72,7 +72,7 @@ public class ServiceDiscovery {
             latch.await();
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("连接zk服务报错...", e);
+            logger.error("连接zk服务报错...", e);
         }
         return zk;
     }
@@ -98,11 +98,11 @@ public class ServiceDiscovery {
                 bytes = zk.getData("/registry/" + node, false, null);
                 dataList.add(new String(bytes));
             }
-            LOGGER.debug("node data: {}", dataList);
+            logger.debug("node data: {}", dataList);
             this.dataList = dataList;
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("监视zk节点异常...", e);
+            logger.error("监视zk节点异常...", e);
         }
     }
 }

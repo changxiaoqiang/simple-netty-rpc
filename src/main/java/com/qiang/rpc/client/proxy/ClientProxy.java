@@ -4,6 +4,7 @@ import com.qiang.rpc.beans.RpcRequest;
 import com.qiang.rpc.beans.RpcResponse;
 import com.qiang.rpc.client.RpcClient;
 import com.qiang.rpc.util.KeyUtil;
+import com.qiang.rpc.zk.ServiceDiscovery;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,9 +17,13 @@ public class ClientProxy {
     private String host;
     private int port;
 
+    private ServiceDiscovery discovery;
+
     public ClientProxy(String host, int port) {
         this.host = host;
         this.port = port;
+
+        discovery = new ServiceDiscovery(host + ":" + port);
     }
 
     public <T> T create(final String requestName, final Class<?> interfaceType) {
@@ -37,8 +42,18 @@ public class ClientProxy {
 
                         String target = host + ":" + port;
 
+                        if(null != discovery){
+                            //发现服务
+                            target = discovery.discovery();
+                        }
+
+                        if(discovery == null){
+                            throw new RuntimeException("serverAddress is null...");
+                        }
+
+                        String[] host = target.split(":");
                         if (!clients.containsKey(target)) {
-                            RpcClient client = new RpcClient(host, port);
+                            RpcClient client = new RpcClient(host[0], Integer.parseInt(host[1]));
                             clients.put(target, client);
                         }
                         RpcClient client = clients.get(target);

@@ -10,7 +10,7 @@ public class ClientTest {
     public static void main(String[] args) {
         ExecutorService BehaviorPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
-        ClientProxy clientProxy = new ClientProxy("127.0.0.1", 1099);
+        ClientProxy clientProxy = new ClientProxy("127.0.0.1", 2181);
 
         for (int i = 0; i < 1000; i++) {
             int a = i;

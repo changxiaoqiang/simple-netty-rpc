@@ -7,6 +7,7 @@ import com.qiang.rpc.handler.HeartbeatHandlerInitializer;
 import com.qiang.rpc.handler.RpcServerHandler;
 import com.qiang.rpc.util.RpcDecoder;
 import com.qiang.rpc.util.RpcEncoder;
+import com.qiang.rpc.zk.ServiceRegistry;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -22,6 +23,8 @@ public class RpcServer {
     final static Logger logger = LogManager.getLogger(RpcServer.class);
 
     private int port;
+
+    private ServiceRegistry registry;
 
     public RpcServer(int port) {
         this.port = port;
@@ -51,7 +54,11 @@ public class RpcServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true);    // childOption会在客户端成功connect后才执行，设置保持连接;
 
             logger.info("start server " + port);
+
             ChannelFuture future = serverBootstrap.bind(port).sync();   // 绑定端口， 阻塞等待服务器启动完成,调用sync()方法会一直阻塞等待channel的停止
+            // 注册到 ZK 中
+            context.getBean(ServiceRegistry.class).register("127.0.0.1:1099");
+
             Channel channel = future.channel();
             channel.closeFuture().sync();                // 等待关闭 ，等待服务器套接字关闭
 
