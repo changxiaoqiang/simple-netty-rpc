@@ -11,10 +11,16 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RpcClient {
@@ -25,6 +31,8 @@ public class RpcClient {
     private int port;
     private Bootstrap bootstrap = null;
     private ReentrantLock lock = new ReentrantLock();
+    private HashedWheelTimer wheelTimer = new HashedWheelTimer(5, TimeUnit.MILLISECONDS, 5000);
+    private ChannelFuture future = null;
 
     private RpcClientHandler clientHandler = new RpcClientHandler();
 
@@ -51,8 +59,8 @@ public class RpcClient {
                             })
                             .option(ChannelOption.SO_KEEPALIVE, true);
                     try {
-                        ChannelFuture fulture = this.bootstrap.connect(this.host, this.port).sync();
-                        this.channel = fulture.channel();
+                        this.future = this.bootstrap.connect(this.host, this.port).sync();
+                        this.channel = this.future.channel();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         logger.error(e);
@@ -93,7 +101,31 @@ public class RpcClient {
                 SynchronousQueue<Object> queue = new SynchronousQueue<>();
 
                 clientHandler.setQueueMap(req.getRequestId(), queue);
-                channel.writeAndFlush(req).sync();
+
+                wheelTimer.newTimeout(new TimerTask() {
+                    @Override
+                    public void run(Timeout timeout) throws Exception {
+                        if(future.cancel(true)) {
+                            logger.info("task has been canceled. {}: {}", req.getRequestId(), req.getClassName()+ "." + req.getMethod());
+
+                            queue.put(new RpcResponse(500));
+
+                            clientHandler.removeQueueMap(req.getRequestId());
+                        } else {
+                            logger.info("req has been send but not get response and task has been canceled. {}: {}", req.getRequestId(), req.getClassName()+ "." + req.getMethod());
+                            queue.put(new RpcResponse(501));
+                            clientHandler.removeQueueMap(req.getRequestId());
+
+                        }
+                    }
+                }, 5, TimeUnit.MILLISECONDS);
+                channel.writeAndFlush(req).sync().addListeners(new GenericFutureListener<Future<? super Void>>() {
+                    @Override
+                    public void operationComplete(Future<? super Void> future) throws Exception {
+                        logger.info("send success {}: {}", req.getRequestId(), req.getClassName() + "." + req.getMethod());
+                        System.out.println("send success");
+                    }
+                });
 
                 return queue;
             }

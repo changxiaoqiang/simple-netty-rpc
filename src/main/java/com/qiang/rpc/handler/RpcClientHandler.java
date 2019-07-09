@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
 
@@ -20,7 +21,15 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         queueMap.remove(requestId);
     }
 
+    public SynchronousQueue<Object> getQueuemap(String key) {
+        return queueMap.get(key);
+    }
+
     public void setQueueMap(String key, SynchronousQueue<Object> queue) {
         this.queueMap.put(key, queue);
+    }
+
+    public void removeQueueMap(String key) {
+        this.queueMap.remove(key);
     }
 }

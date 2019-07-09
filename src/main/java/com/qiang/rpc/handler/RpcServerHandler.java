@@ -65,6 +65,11 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
             response.setThrowable(new RequestNotSupportExistException(requestName));
         }
 
+        try {
+            Thread.sleep(6000);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         ctx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
             @Override
             public void operationComplete(Future<? super Void> future) throws Exception {
