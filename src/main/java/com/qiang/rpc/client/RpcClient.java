@@ -19,6 +19,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
@@ -98,7 +99,7 @@ public class RpcClient {
         }
     }
 
-    public SynchronousQueue send(RpcRequest req) {
+    public HashMap<String, Object> send(RpcRequest req) {
         this.connect();
         try {
             if (this.isConnected()) {
@@ -106,7 +107,7 @@ public class RpcClient {
 
                 clientHandler.setQueueMap(req.getRequestId(), queue);
 
-                timeOut(req, queue);
+                Timeout reqTimeout = timeOut(req, queue);
 
                 BehaviorPool.execute(new Runnable() {
                     @Override
@@ -116,7 +117,6 @@ public class RpcClient {
                                 @Override
                                 public void operationComplete(Future<? super Void> future) throws Exception {
                                     logger.info("send success {}: {}", req.getRequestId(), req.getClassName() + "." + req.getMethod());
-                                    System.out.println("send success");
                                 }
                             });
                         } catch (Exception e) {
@@ -125,7 +125,10 @@ public class RpcClient {
                     }
                 });
 
-                return queue;
+                return new HashMap<String, Object>() {{
+                    put("timeout", reqTimeout);
+                    put("queue", queue);
+                }};
             }
 
         } catch (Exception e) {
@@ -135,8 +138,8 @@ public class RpcClient {
         return null;
     }
 
-    private void timeOut(RpcRequest req, SynchronousQueue<Object> queue) {
-        wheelTimer.newTimeout(new TimerTask() {
+    private Timeout timeOut(RpcRequest req, SynchronousQueue<Object> queue) {
+        return wheelTimer.newTimeout(new TimerTask() {
             @Override
             public void run(Timeout timeout) throws Exception {
                 if (future.cancel(true)) {

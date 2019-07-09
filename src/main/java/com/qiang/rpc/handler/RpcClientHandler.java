@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
 
@@ -17,8 +16,12 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcResponse response) throws Exception {
         String requestId = response.getResponseId();
         SynchronousQueue<Object> queue = queueMap.get(requestId);
-        queue.put(response);
-        queueMap.remove(requestId);
+        if (null != queue) {
+            queue.put(response);
+            queueMap.remove(requestId);
+        } else {
+            System.err.println("requestId: " + requestId + " has been removed.");
+        }
     }
 
     public SynchronousQueue<Object> getQueuemap(String key) {
