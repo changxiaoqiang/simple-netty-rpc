@@ -10,12 +10,15 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 
 public class ClientProxy {
     private final static ConcurrentHashMap<String, RpcClient> clients = new ConcurrentHashMap<>();
     private String host;
     private int port;
+    ExecutorService BehaviorPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
     private ServiceDiscovery discovery;
 
