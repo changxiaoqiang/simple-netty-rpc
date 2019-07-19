@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class RpcClient {
     public static Logger logger = LogManager.getLogger(RpcClient.class);
     private static EventLoopGroup group = new NioEventLoopGroup();
+    ExecutorService BehaviorPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     private Channel channel = null;
     private String host;
     private int port;
@@ -36,9 +37,6 @@ public class RpcClient {
     private ReentrantLock lock = new ReentrantLock();
     private HashedWheelTimer wheelTimer = new HashedWheelTimer(5, TimeUnit.MILLISECONDS, 5000);
     private ChannelFuture future = null;
-
-    ExecutorService BehaviorPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
-
     private RpcClientHandler clientHandler = new RpcClientHandler();
 
     public RpcClient(String host, int port) {

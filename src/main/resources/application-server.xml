@@ -18,8 +18,8 @@
   </bean>
 
   <!-- 配置服务发现组件 -->
-<!--  <bean id="serviceDiscovery" class="com.qiang.rpc.zk.ServiceDiscovery">-->
-<!--    <constructor-arg name="registryAddress" value="${registry.address}"/>-->
-<!--  </bean>-->
+  <!--  <bean id="serviceDiscovery" class="com.qiang.rpc.zk.ServiceDiscovery">-->
+  <!--    <constructor-arg name="registryAddress" value="${registry.address}"/>-->
+  <!--  </bean>-->
 
 </beans>

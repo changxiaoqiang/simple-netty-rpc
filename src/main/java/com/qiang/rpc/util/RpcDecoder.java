@@ -22,11 +22,11 @@ public class RpcDecoder extends ByteToMessageDecoder {
             byteBuf.markReaderIndex();
             int size = byteBuf.readInt();
 
-            if(size < 0){
+            if (size < 0) {
                 channelHandlerContext.close();
             }
 
-            if(byteBuf.readableBytes() < size){
+            if (byteBuf.readableBytes() < size) {
                 byteBuf.resetReaderIndex();
                 return;
             }
