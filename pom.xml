@@ -61,11 +61,11 @@
     <!--    </dependency>-->
 
     <!-- 桥接：log4j1使用Log4j2 也支持其他实现到log4j的桥接，引入不同的jar包即可-->
-<!--    <dependency>-->
-<!--      <groupId>org.slf4j</groupId> -->
-<!--      <artifactId>log4j-over-slf4j</artifactId>-->
-<!--      <version>${slf4j.version}</version>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.slf4j</groupId> -->
+    <!--      <artifactId>log4j-over-slf4j</artifactId>-->
+    <!--      <version>${slf4j.version}</version>-->
+    <!--    </dependency>-->
 
     <dependency>
       <groupId>org.springframework</groupId>
