@@ -18,7 +18,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         SynchronousQueue<Object> queue = queueMap.get(requestId);
         if (null != queue) {
             queue.put(response);
-            queueMap.remove(requestId);
+            removeQueueMap(requestId);
         } else {
             System.err.println("requestId: " + requestId + " has been removed.");
         }
