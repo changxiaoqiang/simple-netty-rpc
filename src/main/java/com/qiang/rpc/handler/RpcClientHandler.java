@@ -28,7 +28,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
         return queueMap.get(key);
     }
 
-    public void setQueueMap(String key, SynchronousQueue<Object> queue) {
+    public void putQueueMap(String key, SynchronousQueue<Object> queue) {
         this.queueMap.put(key, queue);
     }
 

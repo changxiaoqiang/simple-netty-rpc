@@ -103,7 +103,7 @@ public class RpcClient {
             if (this.isConnected()) {
                 SynchronousQueue<Object> queue = new SynchronousQueue<>();
 
-                clientHandler.setQueueMap(req.getRequestId(), queue);
+                clientHandler.putQueueMap(req.getRequestId(), queue);
 
                 Timeout reqTimeout = timeOut(req, queue);
 
