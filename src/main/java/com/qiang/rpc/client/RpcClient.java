@@ -150,7 +150,7 @@ public class RpcClient {
                     logger.info("req has been send but not get response and task has been canceled. {}: {}", req.getRequestId(), req.getClassName() + "." + req.getMethod());
                     queue.put(new RpcResponse(501));
                     clientHandler.removeQueueMap(req.getRequestId());
-
+                    RpcClient.this.close();
                 }
             }
         }, 5, TimeUnit.SECONDS);
