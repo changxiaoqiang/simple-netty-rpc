@@ -46,6 +46,9 @@ public class ServiceDiscovery {
                 logger.debug("using only data: {}", data);
             }else {
                 // 若存在多个地址，则随机获取一个地址
+                for (int i = 0; i < dataList.size(); i++) {
+                    System.out.println(dataList.get(i));
+                }
                 data = dataList.get(ThreadLocalRandom.current().nextInt(size));
                 logger.debug("using random data: {}", data);
             }

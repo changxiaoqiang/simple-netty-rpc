@@ -56,6 +56,8 @@ public class ClientProxy {
                             RpcClient client = new RpcClient(host[0], Integer.parseInt(host[1]));
                             clients.put(target, client);
                         }
+//                        RpcClient client = new RpcClient(host[0], Integer.parseInt(host[1]));
+
                         RpcClient client = clients.get(target);
 
                         SynchronousQueue<RpcResponse> queue = client.send(request);
