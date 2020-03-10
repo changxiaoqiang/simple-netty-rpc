@@ -17,9 +17,56 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <log4j2.version>2.5</log4j2.version>
+    <slf4j.version>1.7.12</slf4j.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j2.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j2.version}</version>
+    </dependency>
+
+    <!-- 桥接：告诉commons logging使用Log4j2, spring 默认使用 commons logging  -->
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.logging.log4j</groupId>-->
+    <!--      <artifactId>log4j-jcl</artifactId>-->
+    <!--      <version>2.7</version>-->
+    <!--    </dependency>-->
+
+    <!-- 桥接：告诉Slf4j使用Log4j2  neety 日志框架检测顺序 slf4j、Log4J、java logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>${log4j2.version}</version>
+    </dependency>
+
+    <!--使用slf4j-->
+    <!--  commons-logging到slf4j的桥梁 -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <!--    commons-logging与slf4j集成  -->
+    <!--    <dependency>-->
+    <!--      <groupId>org.slf4j</groupId>-->
+    <!--      <artifactId>slf4j-api</artifactId>-->
+    <!--      <version>${slf4j.version}</version>-->
+    <!--    </dependency>-->
+
+    <!-- 桥接：log4j1使用Log4j2 也支持其他实现到log4j的桥接，引入不同的jar包即可-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.slf4j</groupId> -->
+    <!--      <artifactId>log4j-over-slf4j</artifactId>-->
+    <!--      <version>${slf4j.version}</version>-->
+    <!--    </dependency>-->
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
@@ -35,17 +82,15 @@
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper</artifactId>
       <version>3.4.9</version>
+      <exclusions>
+        <!--        排除 slf4j-log4j12 否则会与 log4j-slf4j-impl 冲突-->
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <version>${log4j2.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>${log4j2.version}</version>
-    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

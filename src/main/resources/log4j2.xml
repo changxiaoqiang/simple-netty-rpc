@@ -62,6 +62,7 @@
   <Loggers>
     <Root level="trace" additivity="false">
       <AppenderRef ref="common"/>
+      <AppenderRef ref="netty-rpc-logger"/>
       <AppenderRef ref="netty-rpc-error"/>
       <AppenderRef ref="Console"/>
     </Root>

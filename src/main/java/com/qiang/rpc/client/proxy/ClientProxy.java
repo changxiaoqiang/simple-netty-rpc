@@ -5,10 +5,12 @@ import com.qiang.rpc.beans.RpcResponse;
 import com.qiang.rpc.client.RpcClient;
 import com.qiang.rpc.util.KeyUtil;
 import com.qiang.rpc.zk.ServiceDiscovery;
+import io.netty.util.Timeout;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
 
@@ -42,12 +44,12 @@ public class ClientProxy {
 
                         String target = host + ":" + port;
 
-                        if(null != discovery){
+                        if (null != discovery) {
                             //发现服务
                             target = discovery.discovery();
                         }
 
-                        if(discovery == null){
+                        if (discovery == null) {
                             throw new RuntimeException("serverAddress is null...");
                         }
 
@@ -60,13 +62,19 @@ public class ClientProxy {
 
                         RpcClient client = clients.get(target);
 
-                        SynchronousQueue<RpcResponse> queue = client.send(request);
-                        if (null == queue) {
+                        HashMap<String, Object> result = client.send(request);
+                        if (null == result) {
                             RpcResponse response = new RpcResponse();
                             response.setCode(400);
+                            return null;
                         }
+
+                        SynchronousQueue<RpcResponse> queue = (SynchronousQueue<RpcResponse>) result.get("queue");
+
                         try {
                             RpcResponse response = queue.take();
+                            // 清除超时
+                            ((Timeout) result.get("timeout")).cancel();
                             if (response.getCode() == 200) {
                                 return response.getResult();
                             }

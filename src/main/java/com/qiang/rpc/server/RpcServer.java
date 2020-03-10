@@ -35,6 +35,7 @@ public class RpcServer {
 
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
+
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             final RpcServerHandler handler = new RpcServerHandler();

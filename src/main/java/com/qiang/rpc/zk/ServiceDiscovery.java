@@ -26,7 +26,7 @@ public class ServiceDiscovery {
         this.registryAddress = registryAddress;
         /*连接zk服务*/
         ZooKeeper zk = connectServer();
-        if(null != zk){
+        if (null != zk) {
             /*监视zk节点*/
             watchNode(zk);
         }
@@ -34,17 +34,16 @@ public class ServiceDiscovery {
 
     /**
      * 服务发现
-     * @return
      */
-    public String discovery(){
+    public String discovery() {
         String data = null;
         int size = dataList.size();
-        if(size > 0){
-            if(size == 1){
+        if (size > 0) {
+            if (size == 1) {
                 // 若只有一个地址，则获取该地址
                 data = dataList.get(0);
                 logger.debug("using only data: {}", data);
-            }else {
+            } else {
                 // 若存在多个地址，则随机获取一个地址
                 for (int i = 0; i < dataList.size(); i++) {
                     System.out.println(dataList.get(i));
@@ -58,16 +57,15 @@ public class ServiceDiscovery {
 
     /**
      * 连接zk服务
-     * @return
      */
-    private ZooKeeper connectServer(){
+    private ZooKeeper connectServer() {
         ZooKeeper zk = null;
         try {
             /*创建zk客户端*/
             zk = new ZooKeeper(registryAddress, 12000, new Watcher() {
                 @Override
                 public void process(WatchedEvent watchedEvent) {
-                    if(watchedEvent.getState() == Event.KeeperState.SyncConnected){
+                    if (watchedEvent.getState() == Event.KeeperState.SyncConnected) {
                         latch.countDown();
                     }
                 }
@@ -82,14 +80,15 @@ public class ServiceDiscovery {
 
     /**
      * 监视zk节点
+     *
      * @param zk
      */
-    private void watchNode(final ZooKeeper zk){
+    private void watchNode(final ZooKeeper zk) {
         try {
             List<String> nodeList = zk.getChildren("/registry", new Watcher() {
                 @Override
                 public void process(WatchedEvent watchedEvent) {
-                    if(watchedEvent.getType() == Event.EventType.NodeChildrenChanged){
+                    if (watchedEvent.getType() == Event.EventType.NodeChildrenChanged) {
                         watchNode(zk);
                     }
                 }
@@ -97,7 +96,7 @@ public class ServiceDiscovery {
 
             List<String> dataList = new ArrayList<>();
             byte[] bytes;
-            for (String node : nodeList){
+            for (String node : nodeList) {
                 bytes = zk.getData("/registry/" + node, false, null);
                 dataList.add(new String(bytes));
             }

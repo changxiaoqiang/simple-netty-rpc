@@ -16,11 +16,23 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcResponse response) throws Exception {
         String requestId = response.getResponseId();
         SynchronousQueue<Object> queue = queueMap.get(requestId);
-        queue.put(response);
-        queueMap.remove(requestId);
+        if (null != queue) {
+            queue.put(response);
+            removeQueueMap(requestId);
+        } else {
+            System.err.println("requestId: " + requestId + " has been removed.");
+        }
+    }
+
+    public SynchronousQueue<Object> getQueuemap(String key) {
+        return queueMap.get(key);
     }
 
     public void setQueueMap(String key, SynchronousQueue<Object> queue) {
         this.queueMap.put(key, queue);
+    }
+
+    public void removeQueueMap(String key) {
+        this.queueMap.remove(key);
     }
 }

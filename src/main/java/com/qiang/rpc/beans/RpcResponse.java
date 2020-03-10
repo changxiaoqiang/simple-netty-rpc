@@ -10,6 +10,13 @@ public class RpcResponse implements Serializable {
     private Object result;
     private Throwable throwable;
 
+    public RpcResponse() {
+    }
+
+    public RpcResponse(int code) {
+        this.code = code;
+    }
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
